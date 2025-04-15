@@ -30,7 +30,52 @@ Powerball <- read.csv(url4)
 Take5 <- read.csv(url5)
 ```
 
+I have no idea the date ranges for these sets so lets take a look.  We will have to change the Draw.Date column in each data set to a date value and look at the greatest and lowest value. 
 
+```{r}
+
+summary(Cash4Life)
+summary(MegaMillions)
+summary(Pick10)
+summary(Powerball)
+summary(Take5)
+```
+This is a function to convert Draw Date into the proper date format and choose the earliest and latest date.
+```{r}
+summarize_draw_dates <- function(df, name = "Dataset") {
+  # Check if 'Draw.Date' column exists
+  if (!"Draw.Date" %in% names(df)) {
+    cat("\n[", name, "] Missing 'Draw.Date' column.\n")
+    return(NULL)
+  }
+
+  # Try multiple common formats just in case
+  possible_formats <- c("%m/%d/%Y", "%Y-%m-%d", "%d-%m-%Y")
+  converted <- NULL
+  
+  for (fmt in possible_formats) {
+    try({
+      converted <- as.Date(df$Draw.Date, format = fmt)
+      if (all(!is.na(converted))) break
+    }, silent = TRUE)
+  }
+
+  if (all(is.na(converted))) {
+    cat("\n[", name, "] Could not parse dates. Please check the format.\n")
+    return(NULL)
+  }
+
+  # Format dates as "mm/dd/yyyy"
+  earliest <- format(min(converted, na.rm = TRUE), "%m/%d/%Y")
+  latest <- format(max(converted, na.rm = TRUE), "%m/%d/%Y")
+
+  cat("\n======", name, "======\n")
+  cat("Earliest Draw Date:", earliest, "\n")
+  cat("Latest Draw Date:", latest, "\n")
+}
+
+
+summarize_draw_dates(Cash4Life,name="Cash 4 Life")
 ```
 
 
