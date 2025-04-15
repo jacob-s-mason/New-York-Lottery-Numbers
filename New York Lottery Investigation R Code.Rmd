@@ -1,0 +1,36 @@
+---
+title: "New York Lottery Investigation"
+author: "Jacob Mason"
+date: "2025-04-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We will begin by pulling in data from my github repository.  This data was sorced from Data.gov and is assumed to be accurate.   There is data for 5 different New York Lotteries spanning different periods of time.  You must add raw to the begining of the url to pull just the csv file. 
+
+```{r}
+url1 <- "https://raw.githubusercontent.com/jacob-s-mason/New-York-Lottery-Numbers/main/Lottery_Cash_4_Life_Winning_Numbers__Beginning_2014.csv"
+
+url2 <- "https://raw.githubusercontent.com/jacob-s-mason/New-York-Lottery-Numbers/main/Lottery_Mega_Millions_Winning_Numbers__Beginning_2002.csv"
+
+url3 <- "https://raw.githubusercontent.com/jacob-s-mason/New-York-Lottery-Numbers/main/Lottery_Pick_10_Winning_Numbers__Beginning_1987.csv"
+
+url4 <- "https://raw.githubusercontent.com/jacob-s-mason/New-York-Lottery-Numbers/main/Lottery_Powerball_Winning_Numbers__Beginning_2010.csv"
+
+url5 <- "https://raw.githubusercontent.com/jacob-s-mason/New-York-Lottery-Numbers/main/Lottery_Take_5_Winning_Numbers__Beginning_1992.csv"
+
+
+Cash4Life <- read.csv(url1)
+MegaMillions <- read.csv(url2)
+Pick10 <- read.csv(url3)
+Powerball <- read.csv(url4)
+Take5 <- read.csv(url5)
+```
+
+
+```
+
+
