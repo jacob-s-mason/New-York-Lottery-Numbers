@@ -9,6 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(tidyverse)
+```
+
+
 We will begin by pulling in data from my github repository.  This data was sorced from Data.gov and is assumed to be accurate.   There is data for 5 different New York Lotteries spanning different periods of time.  You must add raw to the begining of the url to pull just the csv file. 
 
 ```{r}
@@ -73,9 +78,118 @@ summarize_draw_dates <- function(df, name = "Dataset") {
   cat("Earliest Draw Date:", earliest, "\n")
   cat("Latest Draw Date:", latest, "\n")
 }
+```
 
 
+```{r}
 summarize_draw_dates(Cash4Life,name="Cash 4 Life")
 ```
 
+
+
+```{r}
+print(head(Cash4Life))
+```
+Well that is not good.   I will need to split up the winning numbers column for more than likely all the data sets and the columns marked Winning Numbers.   Let me check the other to be sure.
+
+```{r}
+print(head(MegaMillions))
+
+print(head(Pick10))
+
+print(head(Powerball))
+
+print(head(Take5))      
+      
+```
+ALright, now to split up Winning Numbers
+```{r}
+
+MegaMillions_splt <- MegaMillions %>% separate(Winning.Numbers, into = paste0("Number", 1:5), sep = " ") %>% mutate(across(starts_with("Number"), as.integer))
+
+print(head(MegaMillions))
+
+MegaMillions_splt_long <- MegaMillions_splt %>%
+  pivot_longer(
+    cols = -Draw.Date,
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>% mutate(First_Integer = as.integer(str_extract(Value, "\\d"))) 
+
+print(head(MegaMillions_splt_long))
+
+MegaMillions_splt_long %>% 
+  count(First_Integer) %>%
+  mutate(Percentage = n / sum(n) * 100) %>%
+  filter(!is.na(First_Integer)) %>%
+  ggplot(aes(x = factor(First_Integer), y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = paste(n, "(", round(Percentage, 1), "%)", sep = "")), 
+            vjust = -0.3, size = 3.5) +  # Label with count and percentage
+  scale_x_discrete(limits = as.character(1:9)) +
+  labs(
+    title = "Distribution of First Digits",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+```
+
+THat was a wild goose chase.  Lets see a distribution of just the numbers.
+
+```{r}
+
+
+
+MegaMillions_splt_long %>%  filter(grepl("^Number", Variable)) %>%
+  count(Value) %>%
+  mutate(Percentage = n / sum(n) * 100) %>%
+  filter(!is.na(Value)) %>%
+  ggplot(aes(x = factor(Value), y = n)) +
+  geom_col(fill = "steelblue") +  # Label with count and percentage
+  scale_x_discrete() +
+  labs(
+    title = "Distribution of Values of MegaMillions Normal Balls",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+
+
+```
+
+Now something looks a little fishy looking at this distrobution...... Numbers after 54 were not chosen as frequently....  could be that these numbers were added at a later date in the data set.    Could be someting is off. 
+ 
+```{r}
+
+
+MegaMillions_splt_long %>%  filter(grepl("^Number5", Variable)) %>%
+  count(Value) %>%
+  mutate(Percentage = n / sum(n) * 100) %>%
+  filter(!is.na(Value)) %>%
+  ggplot(aes(x = factor(Value), y = n)) +
+  geom_col(fill = "steelblue") +  # Label with count and percentage
+  scale_x_discrete() +
+  labs(
+    title = "Distribution of Values of MegaMillions Normal Balls",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+
+```
+
+```{r}
+summarize_draw_dates(MegaMillions_splt,name="Mega Millions")
+
+MM_over52 <- MegaMillions_splt_long %>% filter(Value >50)
+
+summarize_draw_dates(MM_over52 , "Over 52")
+```
+```{r}
+
+```
 
