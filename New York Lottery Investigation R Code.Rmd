@@ -165,7 +165,7 @@ Now something looks a little fishy looking at this distrobution...... Numbers af
 ```{r}
 
 
-MegaMillions_splt_long %>%  filter(grepl("^Number5", Variable)) %>%
+MegaMillions_splt_long %>%  
   count(Value) %>%
   mutate(Percentage = n / sum(n) * 100) %>%
   filter(!is.na(Value)) %>%
@@ -190,6 +190,36 @@ MM_over52 <- MegaMillions_splt_long %>% filter(Value >50)
 summarize_draw_dates(MM_over52 , "Over 52")
 ```
 ```{r}
+Pick10_splt <- Pick10 %>% separate(Winning.Numbers, into = paste0("Number", 1:20), sep = " ") %>% mutate(across(starts_with("Number"), as.integer))
+
+Pick10_splt_long <- Pick10_splt %>%
+  pivot_longer(
+    cols = -Draw.Date,
+    names_to = "Variable",
+    values_to = "Value"
+  )
+
+
+Pick10_splt_long %>%  
+  count(Variable, Value) %>%   # Count by both Number and Value
+  mutate(
+    Percentage = n / sum(n) * 100,
+    Label = paste0(n, " (", round(Percentage, 1), "%")) %>%
+  filter(!is.na(Value)) %>%
+  ggplot(aes(x = factor(Value), y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = Label), vjust = -0.5, size = 2) +
+  facet_wrap(~ Variable, ncol = 5) +  # Facet wrap by Number
+  scale_x_discrete() +
+  labs(
+    title = "Distribution of Pick 10 by Number",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+
+
 
 ```
-
+I want to examine CASH4Life because it has so much data.
