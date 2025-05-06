@@ -201,7 +201,7 @@ Pick10_splt_long <- Pick10_splt %>%
 
 
 Pick10_splt_long %>%  
-  count(Variable, Value) %>%   # Count by both Number and Value
+  count(Variable, Value) %>% # Count by both Number and Value
   mutate(
     Percentage = n / sum(n) * 100,
     Label = paste0(n, " (", round(Percentage, 1), "%")) %>%
@@ -223,3 +223,73 @@ Pick10_splt_long %>%
 
 ```
 I want to examine CASH4Life because it has so much data.
+
+```{r}
+
+Pick10_splt_long %>%  
+  count(Variable, Value) %>% filter(Variable=="Number1") %>%# Count by both Number and Value
+  mutate(
+    Percentage = n / sum(n) * 100,
+    Label = paste0(n, " (", round(Percentage, 1), "%")) %>%
+  filter(!is.na(Value)) %>%
+  ggplot(aes(x = factor(Value), y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = Label), vjust = -0.5, size = 2) +
+  scale_x_discrete() +
+  labs(
+    title = "Distribution of Pick 10 by Number1",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+
+
+```
+
+
+
+```{r}
+Pick10_splt_long %>%  
+  count(Variable, Value) %>% filter(Variable=="Number7") %>%# Count by both Number and Value
+  mutate(
+    Percentage = n / sum(n) * 100,
+    Label = paste0(n, " (", round(Percentage, 1), "%")) %>%
+  filter(!is.na(Value)) %>%
+  ggplot(aes(x = factor(Value), y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = Label), vjust = -0.5, size = 2) +
+  scale_x_discrete() +
+  labs(
+    title = "Distribution of Pick 10 by Number7",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+```
+
+
+```{r}
+Pick10_splt_long %>%  
+  count(Variable, Value) %>% filter(Variable=="Number20") %>%# Count by both Number and Value
+  mutate(
+    Percentage = n / sum(n) * 100,
+    Label = paste0(n, " (", round(Percentage, 1), "%")) %>%
+  filter(!is.na(Value)) %>%
+  ggplot(aes(x = factor(Value), y = n)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = Label), vjust = -0.5, size = 2) +
+  scale_x_discrete() +
+  labs(
+    title = "Distribution of Pick 10 by Number20",
+    x = "Leading Digit",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+
+
